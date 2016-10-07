@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" 
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Roles</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <!--Plugins Frameworks-->
+        <h:outputScript library="js" name="jquery-3.1.0.min.js" />
+        <h:outputStylesheet library="css" name="bootstrap.min.css"/>
+        <h:outputScript library="js" name="bootstrap.min.js"/>
+        <h:outputStylesheet library="css" name="font-awesome.min.css"/>
+        <!--Plugins Alerta-->
+        <h:outputStylesheet library="css" name="toastr.min.css"/>
+        <h:outputScript library="js" name="toastr.min.js"/>
+        <h:outputScript library="js" name="custom/mens.js"/>
+        <!--Plugins Tablas-->
+        <h:outputStylesheet library="css" name="bootstrap-table.css" />
+        <h:outputStylesheet library="css" name="custom/table.mini.css" />
+        <h:outputScript library="js" name="bootstrap-table.js" />
+        <h:outputScript library="js" name="bootstrap-table-es-AR.min.js" />
+        <!--Plugins Confirmation [Eliminar]-->
+        <h:outputScript library="js" name="bootstrap-tooltip.js"/>
+        <h:outputScript library="js" name="bootstrap-confirmation.js"/>
+        <!--Plugins Exclusivos de esta página-->
+        <h:outputScript library="js" name="custom/alum.js"/>
+        
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['images/favicon.ico']}"/>
+        <style>
+            .field-error
+            {
+                color: #a94442; 
+                display: block;
+                font-size: 10px;
+            }
+            .field-error:first-letter
+            {
+                text-transform: capitalize;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <div class="row col-md-12">
+            <br/>
+        </div>
+               
+        <div class="row col-md-12">
+            <div class="col-md-4 col-xs-4">
+                <div class="panel panel-default">                    
+                    <div class="panel-heading">Formulario</div>
+                    <div class="panel-body">
+                        <h:form>
+                            <!--Form exclusivo para los remotos-->
+                            <p:remoteCommand name="consRoles" actionListener="#{RolesBean.cons()}" update=":FormRoles" 
+                                             oncomplete="INIT_OBJE_ROLES();" global="true"/>
+                            <p:remoteCommand name="elimRoles" actionListener="#{RolesBean.elim()}" update=":FormRoles :ContRoles" 
+                                             oncomplete="INIT_OBJE_ROLES();"  global="true"/>
+                        </h:form>
+                        <h:form id="FormAlum">
+                            <h:inputHidden id="codiRole" value="#{RolesBean.objeRoles.codiRole}" />
+                            <div class="input-group input-group-xs">
+                                <h:outputLabel  for="descRole" value="Descripcion: "/>
+                                <h:inputText id="descRole" value="#{RolesBean.objeRoles.descRole}" class="form-control" />
+                                <h:message for="descRole" errorClass="field-error" />
+                            </div>
+                            <div class="input-group input-group-xs">
+                                <h:outputLabel  for="direRole" value="Direccion: "/>
+                                <h:inputText id="direRole" value="#{RolesBean.objeRoles.direRole}" class="form-control" />
+                                <h:message for="direRole" errorClass="field-error" />
+                            </div>
+                            <div class="input-group input-group-xs">
+                                <h:outputLabel  for="fechAltaRole" value="Fecha alta: "/>
+                                <h:inputText id="fechAltaRole" value="#{RolesBean.objeRoles.fechAltaRole}" class="form-control">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:inputText>
+                                <h:message for="fechAltaRole" errorClass="field-error" />
+                            </div>
+                            <div class="input-group input-group-xs">
+                                <h:outputLabel  for="fechBajaRole" value="Fecha baja: "/>
+                                <h:inputText id="fechBajaRole" value="#{RolesBean.objeRoles.fechBajaRole}" class="form-control">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:inputText>
+                                <h:message for="fechBajaRole" errorClass="field-error" />
+                            </div>
+                            <div class="input-group input-group-xs">
+                                <h:outputLabel  for="mail" value="Estado:"/>
+                                <h:inputText id="mail" value="#{RolesBean.objeRoles.estaRole}" class="form-control" />
+                                <h:message for="mail" errorClass="field-error" />
+                            </div>
+                            
+                            
+                            <div class="input-group-btn right" style="padding-top: 5px;">
+                                <div class="btn-group">
+                                    <h:commandLink id="btonCanc" class="btn btn-default btn-xs">
+                                        <p:ajax listener="#{RolesBean.limpForm()}" process="@form" update="@form" global="true"/>
+                                        <i class="fa fa-mail-forward"/> Cancelar
+                                    </h:commandLink>
+                                    <h:commandLink id="btonGuar" class="btn btn-success btn-xs" rendered="#{RolesBean.guardar}">
+                                        <p:ajax listener="#{RolesBean.guar()}" process="@form" update="@form :ContAlum" oncomplete="INIT_OBJE_ALUM();" />
+                                        <i class="fa fa-plus"/> Guardar
+                                    </h:commandLink>
+                                    <h:commandLink id="btonModi" class="btn btn-primary btn-xs" rendered="#{!RolesBean.guardar}">
+                                        <p:ajax listener="#{RolesBean.modi()}" process="@form" update="@form :ContAlum" oncomplete="INIT_OBJE_ALUM();" />
+                                        <i class="fa fa-edit"/> Modificar
+                                    </h:commandLink>
+                                    <h:outputLink id="btonElim" class="btn btn-danger btn-xs" rendered="#{!RolesBean.guardar}" 
+                                        pt:data-toggle="confirmation" pt:data-btn-ok-label="Sí" pt:data-btn-ok-icon="fa fa-times"
+                                        pt:data-btn-ok-class="btn-danger btn-xs" pt:data-btn-cancel-label="No" pt:data-btn-cancel-icon="fa fa-mail-forward"
+                                        pt:data-btn-cancel-class="btn-default btn-xs" pt:data-title="¿Esta seguro que desea eliminar?">
+                                        <i class="fa fa-times"/> Eliminar
+                                    </h:outputLink>
+                                </div>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 col-xs-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Tabla de Datos</div>
+                    <div class="panel-body">
+                        <h:panelGroup id="ContAlum">
+                            <h:dataTable pt:data-id="TablRoles" id="TablAlum" value="#{RolesBean.listRoles}"
+                                        var="fila" class="boottable" pt:data-toolbar="#toolbar"
+                                        styleClass="table-hover table-bordered table-condensed table-striped table-responsive"
+                                        pt:data-show-refresh="false" pt:data-show-toggle="false" pt:data-show-columns="false" 
+                                        pt:data-search="true" pt:data-pagination="true" pt:data-page-list="[5, 10, 20, 50]"
+                                        pt:data-click-to-select="true"  pt:data-select-item-name="radio"
+                                        pt:data-single-select="true">                                
+                               <h:column pt:data-field="state" pt:data-checkbox="true">
+                               </h:column>
+                               <h:column pt:data-align="right" pt:data-sortable="true" pt:data-field="id">
+                                   <f:facet name="header">Código</f:facet>
+                                   <h:outputText value="#{fila.codiRole}"/>
+                               </h:column>
+                               <h:column pt:data-sortable="true" pt:data-field="nomb">
+                                   <f:facet name="header">Nombre</f:facet>
+                                   <h:outputText value="#{fila.descRole.concat(' ').concat(fila.direRole)}"/>   
+                                   
+                                   
+                               </h:column>
+                               <h:column pt:data-sortable="true">
+                                   <f:facet name="header">Fecha Alta</f:facet>
+                                   <h:outputText value="#{fila.fechAltaRole}">
+                                       <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-6"/>
+                                   </h:outputText>                            
+                               </h:column>
+                               <h:column pt:data-sortable="true">
+                                   <f:facet name="header">Fecha Baja</f:facet>
+                                   <h:outputText value="#{fila.fechBajaRole}">
+                                       <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-6"/>
+                                   </h:outputText>                            
+                               </h:column>
+                               <h:column pt:data-sortable="true">
+                                   <f:facet name="header">Estado</f:facet>
+                                   <h:outputText value="#{fila.estaRole}"/>
+                               </h:column>
+                           </h:dataTable>
+                        </h:panelGroup>
+                    </div>
+                </div>
+                <a href="index.xhtml" class="btn btn-warning">Roles</a>
+                <a href="Usuarios.xhtml" class="btn btn-warning">Usuarios</a>
+            </div>
+        </div>
+    </h:body>
+</html>
